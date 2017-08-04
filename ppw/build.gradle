@@ -3,13 +3,13 @@ apply plugin: 'maven'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '20.0.0'
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 19
         versionCode 1
-        versionName "1.0"
+        versionName "2.0.0"
     }
     buildTypes {
         release {
@@ -23,20 +23,17 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-ext {
-    PUBLISH_GROUP_ID = 'com.okry'
-    PUBLISH_ARTIFACT_ID = 'ppw'
-    PUBLISH_VERSION = android.defaultConfig.versionName
-}
-
-uploadArchives {
+def mVersion = android.defaultConfig.versionName
+// install to local repository
+task install(type: Upload) {
+    description "Installs the artifacts to the local Maven repository."
+    configuration = configurations['archives']
     repositories.mavenDeployer {
-        def deployPath = file(getProperty('aar.deployPath'))
-        repository(url: "file://${deployPath.absolutePath}")
+        repository url: repositories.mavenLocal().url
         pom.project {
-            groupId project.PUBLISH_GROUP_ID
-            artifactId project.PUBLISH_ARTIFACT_ID
-            version project.PUBLISH_VERSION
+            groupId "com.teambition"
+            artifactId "pointerpopupwindow"
+            version mVersion + '-SNAPSHOT'
         }
     }
 }
